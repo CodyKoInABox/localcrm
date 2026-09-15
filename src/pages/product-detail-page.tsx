@@ -7,8 +7,10 @@ import { toast } from "sonner"
 import { AppBreadcrumb } from "@/components/app-breadcrumb"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { EntityEmpty } from "@/components/entity-empty"
+import { EntityRow } from "@/components/entity-row"
 import { LeadChips } from "@/components/lead-chips"
 import { LeadFormDialog } from "@/components/lead-form-dialog"
+import { DataPanel, MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { ProductFormDialog } from "@/components/product-form-dialog"
 import { ProductStatusBadge } from "@/components/product-status-badge"
@@ -104,6 +106,15 @@ export function ProductDetailPage() {
               <PlusIcon data-icon="inline-start" />
               New lead
             </Button>
+            <MoreMenu
+              items={[
+                {
+                  label: "Delete product",
+                  destructive: true,
+                  onSelect: () => setDeleteOpen(true),
+                },
+              ]}
+            />
           </>
         }
       />
@@ -130,6 +141,7 @@ export function ProductDetailPage() {
               No current offers yet. Open a lead and record what they will pay.
             </p>
           ) : (
+            <DataPanel>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -148,7 +160,7 @@ export function ProductDetailPage() {
                     <TableCell>
                       <Link
                         to={`/leads/${row.lead.id}`}
-                        className="font-medium hover:underline"
+                        className="font-medium underline-offset-4 hover:underline"
                       >
                         {row.company?.name ?? "Unknown"}
                       </Link>
@@ -172,12 +184,13 @@ export function ProductDetailPage() {
                     <TableCell>
                       {row.lead.lastContactDate
                         ? formatCalendarDate(row.lead.lastContactDate)
-                        : "Never"}
+                        : "—"}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            </DataPanel>
           )}
         </CardContent>
       </Card>
@@ -197,26 +210,17 @@ export function ProductDetailPage() {
             <ul className="flex flex-col gap-2">
               {leads.map((lead) => (
                 <li key={lead.id}>
-                  <Link
+                  <EntityRow
                     to={`/leads/${lead.id}`}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 hover:bg-muted/50"
-                  >
-                    <span className="font-medium">
-                      {companyMap.get(lead.companyId)?.name ?? "Unknown"}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {stageById(stages, lead.stageId)?.name}
-                    </span>
-                  </Link>
+                    title={companyMap.get(lead.companyId)?.name ?? "Unknown"}
+                    meta={stageById(stages, lead.stageId)?.name}
+                  />
                 </li>
               ))}
             </ul>
           )}
         </CardContent>
       </Card>
-      <Button variant="ghost" onClick={() => setDeleteOpen(true)}>
-        Delete product
-      </Button>
       <ProductFormDialog
         open={editOpen}
         onOpenChange={setEditOpen}

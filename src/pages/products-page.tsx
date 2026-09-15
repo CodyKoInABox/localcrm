@@ -5,7 +5,8 @@ import { Link } from "react-router"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/confirm-dialog"
-import { EntityEmpty, LoopHint } from "@/components/entity-empty"
+import { EntityEmpty, NoMatches } from "@/components/entity-empty"
+import { DataPanel, MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { ProductFormDialog } from "@/components/product-form-dialog"
 import { ProductStatusBadge } from "@/components/product-status-badge"
@@ -69,7 +70,7 @@ export function ProductsPage() {
         />
       ) : (
         <>
-          <InputGroup className="max-w-sm">
+          <InputGroup className="w-full max-w-sm">
             <InputGroupAddon>
               <SearchIcon />
             </InputGroupAddon>
@@ -81,16 +82,19 @@ export function ProductsPage() {
             />
           </InputGroup>
           {filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No matches.</p>
+            <NoMatches />
           ) : (
+            <DataPanel>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Asking</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Open leads</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Leads</TableHead>
+                  <TableHead className="w-12">
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -100,10 +104,10 @@ export function ProductsPage() {
                   ).length
                   return (
                     <TableRow key={product.id}>
-                      <TableCell>
+                      <TableCell className="max-w-64 whitespace-normal">
                         <Link
                           to={`/products/${product.id}`}
-                          className="font-medium hover:underline"
+                          className="font-medium underline-offset-4 hover:underline"
                         >
                           {product.name}
                         </Link>
@@ -121,30 +125,27 @@ export function ProductsPage() {
                       </TableCell>
                       <TableCell>{count}</TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setEditing(product)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setDeleting(product)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
+                        <MoreMenu
+                          items={[
+                            {
+                              label: "Edit",
+                              onSelect: () => setEditing(product),
+                            },
+                            {
+                              label: "Delete",
+                              destructive: true,
+                              onSelect: () => setDeleting(product),
+                            },
+                          ]}
+                        />
                       </TableCell>
                     </TableRow>
                   )
                 })}
               </TableBody>
             </Table>
+            </DataPanel>
           )}
-          <LoopHint />
         </>
       )}
       <ProductFormDialog open={createOpen} onOpenChange={setCreateOpen} />

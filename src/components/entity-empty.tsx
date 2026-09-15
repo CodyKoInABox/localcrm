@@ -1,4 +1,3 @@
-import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 import { Link } from "react-router"
 
@@ -51,10 +50,8 @@ export function EntityEmpty({
   )
 }
 
-export function LoopHint(): ReactNode {
+export function NoMatches() {
   return (
-    <p className="text-sm text-muted-foreground">
-      Loop: product → company + people → lead → offer.
-    </p>
+    <p className="text-sm text-muted-foreground">No matches for that search.</p>
   )
 }

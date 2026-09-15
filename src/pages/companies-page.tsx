@@ -6,7 +6,8 @@ import { toast } from "sonner"
 
 import { CompanyFormDialog } from "@/components/company-form-dialog"
 import { ConfirmDialog } from "@/components/confirm-dialog"
-import { EntityEmpty, LoopHint } from "@/components/entity-empty"
+import { EntityEmpty, NoMatches } from "@/components/entity-empty"
+import { DataPanel, MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -65,7 +66,7 @@ export function CompaniesPage() {
         />
       ) : (
         <>
-          <InputGroup className="max-w-sm">
+          <InputGroup className="w-full max-w-sm">
             <InputGroupAddon>
               <SearchIcon />
             </InputGroupAddon>
@@ -76,22 +77,28 @@ export function CompaniesPage() {
               aria-label="Search companies"
             />
           </InputGroup>
-          <Table>
+          {filtered.length === 0 ? (
+            <NoMatches />
+          ) : (
+            <DataPanel>
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>People</TableHead>
                 <TableHead>Leads</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-12">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((company) => (
                 <TableRow key={company.id}>
-                  <TableCell>
+                  <TableCell className="max-w-64 whitespace-normal">
                     <Link
                       to={`/companies/${company.id}`}
-                      className="font-medium hover:underline"
+                      className="font-medium underline-offset-4 hover:underline"
                     >
                       {company.name}
                     </Link>
@@ -109,28 +116,26 @@ export function CompaniesPage() {
                     }
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditing(company)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setDeleting(company)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+                    <MoreMenu
+                      items={[
+                        {
+                          label: "Edit",
+                          onSelect: () => setEditing(company),
+                        },
+                        {
+                          label: "Delete",
+                          destructive: true,
+                          onSelect: () => setDeleting(company),
+                        },
+                      ]}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-          <LoopHint />
+            </Table>
+            </DataPanel>
+          )}
         </>
       )}
       <CompanyFormDialog open={createOpen} onOpenChange={setCreateOpen} />

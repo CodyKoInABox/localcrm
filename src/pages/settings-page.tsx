@@ -130,11 +130,13 @@ export function SettingsPage() {
         description="Currency, pipeline, and moving data between browsers."
       />
       <Tabs defaultValue="workspace">
-        <TabsList>
-          <TabsTrigger value="workspace">Workspace</TabsTrigger>
-          <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
-          <TabsTrigger value="data">Data</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList>
+            <TabsTrigger value="workspace">Workspace</TabsTrigger>
+            <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
+            <TabsTrigger value="data">Data</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="workspace">
           <div className="flex flex-col gap-4">
             <Card>
@@ -426,6 +428,11 @@ function SortableStage({
     () => db.leads.where("stageId").equals(stage.id).count(),
     [stage.id]
   )
+  const [name, setName] = React.useState(stage.name)
+
+  React.useEffect(() => {
+    setName(stage.name)
+  }, [stage.name])
 
   async function save(partial: Partial<Stage>) {
     await db.stages.update(stage.id, partial)
@@ -474,8 +481,18 @@ function SortableStage({
             </FieldLabel>
             <Input
               id={`stage-name-${stage.id}`}
-              value={stage.name}
-              onChange={(event) => void save({ name: event.target.value })}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              onBlur={() => {
+                const trimmed = name.trim()
+                if (!trimmed) {
+                  setName(stage.name)
+                  return
+                }
+                if (trimmed !== stage.name) {
+                  void save({ name: trimmed })
+                }
+              }}
             />
           </Field>
         </div>

@@ -10,11 +10,13 @@ const LABELS: Record<ProductStatus, string> = {
 
 export function ProductStatusBadge({ status }: { status: ProductStatus }) {
   const variant =
-    status === "withdrawn"
-      ? "destructive"
-      : status === "available"
-        ? "default"
-        : "secondary"
+    status === "available"
+      ? "default"
+      : status === "reserved"
+        ? "secondary"
+        : status === "sold"
+          ? "outline"
+          : "destructive"
 
   return <Badge variant={variant}>{LABELS[status]}</Badge>
 }

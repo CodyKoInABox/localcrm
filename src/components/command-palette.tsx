@@ -57,7 +57,7 @@ export function CommandPalette({
     >
       <Command>
         <CommandInput placeholder="Search pages, products, companies…" />
-        <CommandList>
+        <CommandList className="max-h-[min(28rem,70vh)]">
           <CommandEmpty>No results.</CommandEmpty>
           <CommandGroup heading="Go">
             <CommandItem onSelect={() => go("/")}>

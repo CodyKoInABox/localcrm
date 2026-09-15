@@ -8,7 +8,9 @@ import { AppBreadcrumb } from "@/components/app-breadcrumb"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { ContactFormDialog } from "@/components/contact-form-dialog"
 import { EntityEmpty } from "@/components/entity-empty"
+import { EntityRow } from "@/components/entity-row"
 import { LeadFormDialog } from "@/components/lead-form-dialog"
+import { MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -87,24 +89,42 @@ export function ContactDetailPage() {
               <PlusIcon data-icon="inline-start" />
               New lead
             </Button>
+            <MoreMenu
+              items={[
+                {
+                  label: "Delete contact",
+                  destructive: true,
+                  onSelect: () => setDeleteOpen(true),
+                },
+              ]}
+            />
           </>
         }
       />
-      <div className="flex flex-wrap gap-2 text-sm">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
         {company ? (
-          <Link to={`/companies/${company.id}`} className="hover:underline">
+          <Link
+            to={`/companies/${company.id}`}
+            className="underline-offset-4 hover:underline"
+          >
             {company.name}
           </Link>
         ) : (
           <span>No company</span>
         )}
         {contact.email ? (
-          <a className="text-muted-foreground" href={`mailto:${contact.email}`}>
+          <a
+            className="underline-offset-4 hover:underline"
+            href={`mailto:${contact.email}`}
+          >
             {contact.email}
           </a>
         ) : null}
         {contact.phone ? (
-          <a className="text-muted-foreground" href={`tel:${contact.phone}`}>
+          <a
+            className="underline-offset-4 hover:underline"
+            href={`tel:${contact.phone}`}
+          >
             {contact.phone}
           </a>
         ) : null}
@@ -128,26 +148,21 @@ export function ContactDetailPage() {
             <ul className="flex flex-col gap-2">
               {involved.map((lead) => (
                 <li key={lead.id}>
-                  <Link
+                  <EntityRow
                     to={`/leads/${lead.id}`}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 hover:bg-muted/50"
-                  >
-                    <span className="font-medium">
-                      {productMap.get(lead.productId)?.name ?? "Product"}
-                    </span>
-                    <Badge variant="outline">
-                      {stageById(stages, lead.stageId)?.name ?? "Stage"}
-                    </Badge>
-                  </Link>
+                    title={productMap.get(lead.productId)?.name ?? "Product"}
+                    meta={
+                      <Badge variant="outline">
+                        {stageById(stages, lead.stageId)?.name ?? "Stage"}
+                      </Badge>
+                    }
+                  />
                 </li>
               ))}
             </ul>
           )}
         </CardContent>
       </Card>
-      <Button variant="ghost" onClick={() => setDeleteOpen(true)}>
-        Delete contact
-      </Button>
       <ContactFormDialog
         open={editOpen}
         onOpenChange={setEditOpen}

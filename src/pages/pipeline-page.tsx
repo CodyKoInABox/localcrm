@@ -13,13 +13,14 @@ import {
 } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { useLiveQuery } from "dexie-react-hooks"
-import { Columns3Icon } from "lucide-react"
+import { Columns3Icon, GripVerticalIcon } from "lucide-react"
 import { Link } from "react-router"
 
 import { EntityEmpty } from "@/components/entity-empty"
 import { LeadChips } from "@/components/lead-chips"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useCurrency } from "@/hooks/use-currency"
@@ -223,14 +224,13 @@ function DraggableLead({
       }}
       style={{ transform: CSS.Translate.toString(transform) }}
       className={cn(isDragging && "opacity-40")}
-      {...listeners}
-      {...attributes}
     >
       <LeadCard
         lead={lead}
         companyName={companyName}
         productName={productName}
         currency={currency}
+        dragHandleProps={{ ...listeners, ...attributes }}
       />
     </div>
   )
@@ -242,26 +242,45 @@ function LeadCard({
   productName,
   currency,
   overlay = false,
+  dragHandleProps,
 }: {
   lead: Lead
   companyName?: string
   productName?: string
   currency: string
   overlay?: boolean
+  dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
 }) {
   const chips = deriveChips(lead)
   return (
-    <Card className={cn("cursor-grab shadow-sm", overlay && "cursor-grabbing")}>
+    <Card className={cn("shadow-sm", overlay && "cursor-grabbing")}>
       <CardHeader className="p-3">
-        <CardTitle className="text-sm">
-          {overlay ? (
-            leadLabel(companyName, productName)
-          ) : (
-            <Link to={`/leads/${lead.id}`} className="hover:underline">
-              {leadLabel(companyName, productName)}
-            </Link>
-          )}
-        </CardTitle>
+        <div className="flex items-start gap-1">
+          {dragHandleProps ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="mt-0.5 cursor-grab"
+              aria-label="Drag to another stage"
+              {...dragHandleProps}
+            >
+              <GripVerticalIcon />
+            </Button>
+          ) : null}
+          <CardTitle className="min-w-0 flex-1 text-sm">
+            {overlay ? (
+              leadLabel(companyName, productName)
+            ) : (
+              <Link
+                to={`/leads/${lead.id}`}
+                className="underline-offset-4 hover:underline"
+              >
+                {leadLabel(companyName, productName)}
+              </Link>
+            )}
+          </CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
         <p className="text-sm text-muted-foreground">

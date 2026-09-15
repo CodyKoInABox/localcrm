@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/confirm-dialog"
 import { EntityEmpty } from "@/components/entity-empty"
 import { LeadChips } from "@/components/lead-chips"
 import { MoneyInput } from "@/components/money-input"
+import { MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { StageSelect } from "@/components/stage-select"
 import { Button } from "@/components/ui/button"
@@ -23,7 +24,6 @@ import {
 } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -151,11 +151,22 @@ export function LeadDetailPage() {
             : "Workspace for this conversation."
         }
         actions={
-          <div className="w-56">
-            <StageSelect
-              value={lead.stageId}
-              onValueChange={(value) => void patch({ stageId: value })}
-              stages={stages}
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <div className="w-full sm:w-56">
+              <StageSelect
+                value={lead.stageId}
+                onValueChange={(value) => void patch({ stageId: value })}
+                stages={stages}
+              />
+            </div>
+            <MoreMenu
+              items={[
+                {
+                  label: "Delete lead",
+                  destructive: true,
+                  onSelect: () => setDeleteOpen(true),
+                },
+              ]}
             />
           </div>
         }
@@ -166,7 +177,7 @@ export function LeadDetailPage() {
           <CardHeader>
             <CardTitle>Comms</CardTitle>
             <CardDescription>
-              No message log. These fields are the whole picture.
+              Who started it, who last wrote, last contact.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -224,9 +235,6 @@ export function LeadDetailPage() {
               </Field>
               <Field>
                 <FieldLabel htmlFor="last-contact">Last contact date</FieldLabel>
-                <FieldDescription>
-                  Calendar date, not a timestamp.
-                </FieldDescription>
                 <Input
                   id="last-contact"
                   type="date"
@@ -257,9 +265,7 @@ export function LeadDetailPage() {
         <Card>
           <CardHeader>
             <CardTitle>Next action</CardTitle>
-            <CardDescription>
-              Due date is a calendar date in this browser.
-            </CardDescription>
+            <CardDescription>Local calendar date.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
@@ -303,6 +309,7 @@ export function LeadDetailPage() {
         </CardHeader>
         <form onSubmit={(event) => void saveOffer(event)}>
           <CardContent>
+            <div className="flex flex-col gap-4">
             <FieldGroup>
               <Field data-invalid={offerInvalid || undefined}>
                 <FieldLabel htmlFor="offer-amount">Amount they will pay</FieldLabel>
@@ -327,7 +334,7 @@ export function LeadDetailPage() {
               </Field>
             </FieldGroup>
             {sortedHistory.length > 0 ? (
-              <div className="mt-4 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium">History</p>
                 <ul className="flex flex-col gap-2">
                   {sortedHistory.map((row) => (
@@ -345,10 +352,11 @@ export function LeadDetailPage() {
                 </ul>
               </div>
             ) : (
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 No prior amounts.
               </p>
             )}
+            </div>
           </CardContent>
           <CardFooter>
             <Button type="submit">Save offer</Button>
@@ -396,11 +404,15 @@ export function LeadDetailPage() {
                         }}
                       />
                       <FieldLabel htmlFor={checkboxId} className="font-normal">
-                        <Link to={`/contacts/${person.id}`} className="hover:underline">
-                          {person.name}
-                        </Link>
+                        {person.name}
                         {person.role ? ` · ${person.role}` : ""}
                       </FieldLabel>
+                      <Link
+                        to={`/contacts/${person.id}`}
+                        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+                      >
+                        Open
+                      </Link>
                     </Field>
                   )
                 })}
@@ -418,9 +430,6 @@ export function LeadDetailPage() {
           .
         </p>
       ) : null}
-      <Button variant="ghost" onClick={() => setDeleteOpen(true)}>
-        Delete lead
-      </Button>
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

@@ -23,6 +23,7 @@ import { nowIso } from "@/lib/dates"
 import { db } from "@/lib/db"
 import { createId } from "@/lib/ids"
 import type { Company } from "@/lib/schema"
+import { normalizeWebsite } from "@/lib/urls"
 
 export function CompanyFormDialog({
   open,
@@ -60,7 +61,7 @@ export function CompanyFormDialog({
     if (company) {
       await db.companies.update(company.id, {
         name: name.trim(),
-        website: website.trim() || undefined,
+        website: normalizeWebsite(website),
         notes: notes.trim(),
         updatedAt: stamp,
       })
@@ -69,7 +70,7 @@ export function CompanyFormDialog({
       await db.companies.add({
         id: createId(),
         name: name.trim(),
-        website: website.trim() || undefined,
+        website: normalizeWebsite(website),
         notes: notes.trim(),
         createdAt: stamp,
         updatedAt: stamp,
@@ -81,7 +82,7 @@ export function CompanyFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-[min(90dvh,44rem)] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{company ? "Edit company" : "New company"}</DialogTitle>
           <DialogDescription>
@@ -111,7 +112,7 @@ export function CompanyFormDialog({
               <Input
                 id="company-website"
                 name="website"
-                type="url"
+                type="text"
                 inputMode="url"
                 autoComplete="url"
                 placeholder="https://"

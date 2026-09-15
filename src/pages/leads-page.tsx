@@ -3,9 +3,10 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { HandshakeIcon, PlusIcon } from "lucide-react"
 import { Link, useSearchParams } from "react-router"
 
-import { EntityEmpty, LoopHint } from "@/components/entity-empty"
+import { EntityEmpty } from "@/components/entity-empty"
 import { LeadChips } from "@/components/lead-chips"
 import { LeadFormDialog } from "@/components/lead-form-dialog"
+import { DataPanel } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -116,7 +117,7 @@ export function LeadsPage() {
         />
       ) : (
         <>
-          <FieldGroup>
+          <FieldGroup className="flex-row flex-wrap items-end gap-4">
             <Field className="w-48">
               <FieldLabel>Product</FieldLabel>
               <Select
@@ -184,14 +185,20 @@ export function LeadsPage() {
               </FieldLabel>
             </Field>
           </FieldGroup>
-          <Table>
+          {filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No leads match these filters.
+            </p>
+          ) : (
+            <DataPanel>
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Conversation</TableHead>
                 <TableHead>Stage</TableHead>
                 <TableHead>Offer</TableHead>
                 <TableHead>Next action</TableHead>
-                <TableHead>Chips</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -199,10 +206,10 @@ export function LeadsPage() {
                 const chips = deriveChips(lead)
                 return (
                   <TableRow key={lead.id}>
-                    <TableCell>
+                    <TableCell className="max-w-72 whitespace-normal">
                       <Link
                         to={`/leads/${lead.id}`}
-                        className="font-medium hover:underline"
+                        className="font-medium underline-offset-4 hover:underline"
                       >
                         {leadLabel(
                           companyMap.get(lead.companyId)?.name,
@@ -220,14 +227,14 @@ export function LeadsPage() {
                         ? "—"
                         : formatMoney(lead.currentOfferAmount, currency)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="whitespace-normal">
                       <div className="flex flex-col gap-0.5">
                         <span>{lead.nextAction || "—"}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {lead.nextActionDue
-                            ? formatCalendarDate(lead.nextActionDue)
-                            : ""}
-                        </span>
+                        {lead.nextActionDue ? (
+                          <span className="text-xs text-muted-foreground">
+                            {formatCalendarDate(lead.nextActionDue)}
+                          </span>
+                        ) : null}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -237,13 +244,9 @@ export function LeadsPage() {
                 )
               })}
             </TableBody>
-          </Table>
-          {filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No leads match these filters.
-            </p>
-          ) : null}
-          <LoopHint />
+            </Table>
+            </DataPanel>
+          )}
         </>
       )}
       <LeadFormDialog

@@ -23,7 +23,9 @@ export function AppBreadcrumb({
             <BreadcrumbItem key={`${item.label}-${index}`}>
               {index > 0 ? <BreadcrumbSeparator /> : null}
               {last || !item.to ? (
-                <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                <BreadcrumbPage className="max-w-[12rem] truncate sm:max-w-xs">
+                  {item.label}
+                </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
                   <Link to={item.to}>{item.label}</Link>

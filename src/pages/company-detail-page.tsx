@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Building2Icon, PlusIcon } from "lucide-react"
-import { Link, useNavigate, useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { toast } from "sonner"
 
 import { AppBreadcrumb } from "@/components/app-breadcrumb"
@@ -9,7 +9,9 @@ import { CompanyFormDialog } from "@/components/company-form-dialog"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { ContactFormDialog } from "@/components/contact-form-dialog"
 import { EntityEmpty } from "@/components/entity-empty"
+import { EntityRow } from "@/components/entity-row"
 import { LeadFormDialog } from "@/components/lead-form-dialog"
+import { MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -24,6 +26,7 @@ import { stageById } from "@/lib/chips"
 import { db } from "@/lib/db"
 import { byId } from "@/lib/maps"
 import { deleteCompany } from "@/lib/mutations"
+import { hrefForWebsite } from "@/lib/urls"
 
 export function CompanyDetailPage() {
   const { id } = useParams()
@@ -99,13 +102,22 @@ export function CompanyDetailPage() {
               <PlusIcon data-icon="inline-start" />
               New lead
             </Button>
+            <MoreMenu
+              items={[
+                {
+                  label: "Delete company",
+                  destructive: true,
+                  onSelect: () => setDeleteOpen(true),
+                },
+              ]}
+            />
           </>
         }
       />
       {company.website ? (
         <a
-          href={company.website}
-          className="text-sm text-primary underline-offset-4 hover:underline"
+          href={hrefForWebsite(company.website)}
+          className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline"
           target="_blank"
           rel="noreferrer"
         >
@@ -126,15 +138,11 @@ export function CompanyDetailPage() {
             <ul className="flex flex-col gap-2">
               {people.map((person) => (
                 <li key={person.id}>
-                  <Link
+                  <EntityRow
                     to={`/contacts/${person.id}`}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 hover:bg-muted/50"
-                  >
-                    <span className="font-medium">{person.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {person.role || person.email || "—"}
-                    </span>
-                  </Link>
+                    title={person.name}
+                    meta={person.role || person.email || "—"}
+                  />
                 </li>
               ))}
             </ul>
@@ -155,26 +163,23 @@ export function CompanyDetailPage() {
             <ul className="flex flex-col gap-2">
               {leads.map((lead) => (
                 <li key={lead.id}>
-                  <Link
+                  <EntityRow
                     to={`/leads/${lead.id}`}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 hover:bg-muted/50"
-                  >
-                    <span className="font-medium">
-                      {productMap.get(lead.productId)?.name ?? "Unknown product"}
-                    </span>
-                    <Badge variant="outline">
-                      {stageById(stages, lead.stageId)?.name ?? "Stage"}
-                    </Badge>
-                  </Link>
+                    title={
+                      productMap.get(lead.productId)?.name ?? "Unknown product"
+                    }
+                    meta={
+                      <Badge variant="outline">
+                        {stageById(stages, lead.stageId)?.name ?? "Stage"}
+                      </Badge>
+                    }
+                  />
                 </li>
               ))}
             </ul>
           )}
         </CardContent>
       </Card>
-      <Button variant="ghost" onClick={() => setDeleteOpen(true)}>
-        Delete company
-      </Button>
       <CompanyFormDialog
         open={editOpen}
         onOpenChange={setEditOpen}

@@ -6,7 +6,8 @@ import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { ContactFormDialog } from "@/components/contact-form-dialog"
-import { EntityEmpty, LoopHint } from "@/components/entity-empty"
+import { EntityEmpty, NoMatches } from "@/components/entity-empty"
+import { DataPanel, MoreMenu } from "@/components/more-menu"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -78,7 +79,7 @@ export function ContactsPage() {
         />
       ) : (
         <>
-          <InputGroup className="max-w-sm">
+          <InputGroup className="w-full max-w-sm">
             <InputGroupAddon>
               <SearchIcon />
             </InputGroupAddon>
@@ -89,23 +90,29 @@ export function ContactsPage() {
               aria-label="Search contacts"
             />
           </InputGroup>
-          <Table>
+          {filtered.length === 0 ? (
+            <NoMatches />
+          ) : (
+            <DataPanel>
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-12">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((contact) => (
                 <TableRow key={contact.id}>
-                  <TableCell>
+                  <TableCell className="max-w-64 whitespace-normal">
                     <Link
                       to={`/contacts/${contact.id}`}
-                      className="font-medium hover:underline"
+                      className="font-medium underline-offset-4 hover:underline"
                     >
                       {contact.name}
                     </Link>
@@ -116,28 +123,26 @@ export function ContactsPage() {
                   <TableCell>{contact.role || "—"}</TableCell>
                   <TableCell>{contact.email || "—"}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditing(contact)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setDeleting(contact)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+                    <MoreMenu
+                      items={[
+                        {
+                          label: "Edit",
+                          onSelect: () => setEditing(contact),
+                        },
+                        {
+                          label: "Delete",
+                          destructive: true,
+                          onSelect: () => setDeleting(contact),
+                        },
+                      ]}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-          <LoopHint />
+            </Table>
+            </DataPanel>
+          )}
         </>
       )}
       <ContactFormDialog
