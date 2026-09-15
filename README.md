@@ -2,6 +2,8 @@
 
 Client-only sales CRM. IndexedDB in this browser, no backend, no accounts.
 
+Created by [codykoinabox](https://github.com/CodyKoInABox). Source: [github.com/CodyKoInABox/localcrm](https://github.com/CodyKoInABox/localcrm). Licensed under [GPL-3.0](LICENSE).
+
 ## GitHub Pages
 
 1. Push to `main`.
@@ -46,3 +48,7 @@ Dates are calendar dates (`YYYY-MM-DD`), not timezone-shifted timestamps.
 ## Stack
 
 Vite, React 19, TypeScript, Tailwind 4, shadcn/ui, hash router, Dexie, Zod, lucide, @dnd-kit, sonner.
+
+## License
+
+[GNU General Public License v3.0](LICENSE).

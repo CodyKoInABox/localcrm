@@ -9,6 +9,8 @@ import {
 } from "lucide-react"
 import { Link, useLocation } from "react-router"
 
+import { AppCredit } from "@/components/app-credit"
+import { BrandMark } from "@/components/brand-mark"
 import { ThemeMenu } from "@/components/theme-menu"
 import {
   Sidebar,
@@ -24,6 +26,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
+import { APP_NAME } from "@/lib/brand"
 
 const NAV = [
   { to: "/", label: "Home", icon: HouseIcon },
@@ -42,13 +45,16 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/">
-                <span className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  L
-                </span>
-                <span className="flex min-w-0 flex-col gap-0.5 leading-none">
-                  <span className="truncate font-medium">Local CRM</span>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              tooltip={APP_NAME}
+              className="group-data-[collapsible=icon]:justify-center"
+            >
+              <Link to="/" aria-label={APP_NAME}>
+                <BrandMark />
+                <span className="flex min-w-0 flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-medium">{APP_NAME}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     This browser only
                   </span>
@@ -90,7 +96,10 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarSeparator />
+        <div className="px-2 group-data-[collapsible=icon]:hidden">
+          <AppCredit />
+        </div>
+        <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
         <SidebarMenu>
           <SidebarMenuItem>
             <ThemeMenu />

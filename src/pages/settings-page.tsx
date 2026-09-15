@@ -18,6 +18,8 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { GripVerticalIcon, PlusIcon } from "lucide-react"
 import { toast } from "sonner"
 
+import { AppCredit } from "@/components/app-credit"
+import { BrandMark } from "@/components/brand-mark"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { PageHeader, PageSkeleton, PageStack } from "@/components/page-header"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -57,6 +59,7 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 import { useTheme } from "@/components/theme-provider"
+import { APP_NAME } from "@/lib/brand"
 import { CURRENCY_OPTIONS, SETTINGS_ID } from "@/lib/constants"
 import { orderedStages } from "@/lib/chips"
 import { todayIso } from "@/lib/dates"
@@ -134,6 +137,17 @@ export function SettingsPage() {
         </TabsList>
         <TabsContent value="workspace">
           <div className="flex flex-col gap-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <BrandMark />
+                  <CardTitle>{APP_NAME}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <AppCredit />
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Currency</CardTitle>

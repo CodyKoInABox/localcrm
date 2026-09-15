@@ -2,6 +2,13 @@
   "name": "localcrm",
   "private": true,
   "version": "0.0.1",
+  "license": "GPL-3.0-only",
+  "author": "CodyKoInABox",
+  "homepage": "https://github.com/CodyKoInABox/localcrm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CodyKoInABox/localcrm.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
